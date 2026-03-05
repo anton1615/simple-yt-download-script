@@ -1,0 +1,73 @@
+name: Build Executables
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Build executables
+      run: |
+        pyinstaller --onefile --name 01_archive archive.py
+        pyinstaller --onefile --name 02_vod_video_downloader vod_video_downloader.py
+        pyinstaller --onefile --name 03_vod_video_downloader_cookies vod_video_downloader_cookies.py
+        pyinstaller --onefile --name 04_vod_chat_downloader vod_chat_downloader.py
+        pyinstaller --onefile --name 05_vod_chat_downloader_cookies vod_chat_downloader_cookies.py
+        pyinstaller --onefile --name 06_vod_batch_downloader vod_batch_downloader.py
+        pyinstaller --onefile --name 07_vod_batch_downloader_cookies vod_batch_downloader_cookies.py
+        pyinstaller --onefile --name 08_tc_record tc_record.py
+        pyinstaller --onefile --name 09_archive_cookies archive_cookies.py
+
+    - name: Create distribution package
+      run: |
+        mkdir dist_package
+        copy dist\01_archive.exe dist_package\
+        copy dist\02_vod_video_downloader.exe dist_package\
+        copy dist\03_vod_video_downloader_cookies.exe dist_package\
+        copy dist\04_vod_chat_downloader.exe dist_package\
+        copy dist\05_vod_chat_downloader_cookies.exe dist_package\
+        copy dist\06_vod_batch_downloader.exe dist_package\
+        copy dist\07_vod_batch_downloader_cookies.exe dist_package\
+        copy dist\08_tc_record.exe dist_package\
+        copy dist\09_archive_cookies.exe dist_package\
+        copy .env.example dist_package\
+        copy download.txt.example dist_package\
+        copy requirements.txt dist_package\
+
+    - name: Create ZIP archive
+      run: |
+        cd dist_package
+        Compress-Archive -Path * -DestinationPath ../youtube-dl-tools.zip
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: youtube-dl-tools
+        path: youtube-dl-tools.zip
+
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: youtube-dl-tools.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
