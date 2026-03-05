@@ -1,0 +1,26 @@
+# Sensitive files - DO NOT COMMIT
+cookies.txt
+youtube.com_cookies.txt
+
+# Environment variables
+.env
+
+# Build artifacts
+build/
+dist/
+*.spec
+*.pyc
+__pycache__/
+*.exe
+
+# PyInstaller
+*.manifest
+*.html
+*.txt
+!requirements.txt
+!download.txt.example
+
+# Output directories
+00_*/
+20*/
+202*/
