@@ -2,6 +2,12 @@
 
 A collection of Python scripts for downloading YouTube videos, live streams, and chat archives.
 
+## Security Notice
+
+> This repository may be used alongside API keys, browser cookies, logs, and exported chat or analytics data that can contain sensitive information.
+> Do not publish or sync working directories, cookie files, environment files, or generated output blindly.
+> Review any archive, CSV, JSON, or log artifacts before sharing them with others.
+
 ## Features
 
 - **Live Stream Archiving**: Download live streams with chat archives in parallel
